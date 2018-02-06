@@ -7,6 +7,8 @@ name still under consideration
 - [Methods and Attempts to convert table to image](#methods-and-attempts-to-convert-table-to-image)
 - [Meeting notes 01/19/2018](#notes-from-meeting-on-19th)
 
+---
+
 ## Notes from meeting on 19th
 
 :date: 01/19/2018
@@ -23,6 +25,8 @@ Renji has an implementaion based on python 3.5 and imagemagick :link: https://gi
 - Work with really small character sizes to reduce the size of the image
 - Try lower resolution
 
+---
+
 ## Methods and Attempts to convert table to image
 
 ### 1. Imagemagick
@@ -31,7 +35,7 @@ First attempt by Renjie Tang is present at :link: https://github.com/RenjieTang/
 
 Code is in python -_requires python 3.5_
 
-#### problem
+#### 1.1  problem
 
 The approach is manual
 
@@ -48,7 +52,7 @@ Seaborn is a Python visualization library based on matplotlib. It provides a hig
 
 :link: https://stackoverflow.com/questions/35411414/efficiently-ploting-a-table-in-csv-format-using-python/35411880?noredirect=1#comment58525355_35411880
 
-#### problem
+#### 2.1 problem
 
 This works only for numerical data. String data can't be visualized in this way
 
@@ -64,3 +68,24 @@ Both these examples work for small tables, but hangs/take really long for the ``
 :question: Could we possibly tile the rendering?
 
 ### 4. Convert to HTML and then save it
+
+---
+
+## Map web interface
+
+### 1. Leaflet.js
+
+:link: http://leafletjs.com/examples/quick-start/
+
+Simple plugin, makes request to URL of form:
+
+`http://{HOST}/{id}/{z}/{x}/{y}.png?access_token={TOKEN}`
+
+#### 1.1 problems
+
+#### 1.2 Things to do
+
+- create django service that does this
+- enable https on your server
+- should we do access key?
+- what to put in _ID_ field
