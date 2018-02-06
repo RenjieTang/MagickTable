@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('map/', include('mapui.urls')),
+    path('tiler/', include('tiler.urls')),
     path('admin/', admin.site.urls),
 ]
