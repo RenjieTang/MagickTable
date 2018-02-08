@@ -11,9 +11,13 @@ def index(request):
 # this is the function that will return a tile based on x, y, z
 # TODO try different image formats
 def tile_request(request, id, z, x, y):
+    if z == '13':
+        pat = "/home/pavan/MagickTable/tiler/static/map2.jpg"
+    else:
+        pat = "/home/pavan/MagickTable/tiler/static/map.jpg"
     try:
-        with open("/home/pavan/MagickTable/tiler/static/plain.png", "rb") as f:
-            return HttpResponse(f.read(), content_type="image/png")
+        with open(pat, "rb") as f:
+            return HttpResponse(f.read(), content_type="image/jpg")
     except IOError:
         red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
         response = HttpResponse(content_type="image/jpeg")
