@@ -11,15 +11,24 @@ def index(request):
 # this is the function that will return a tile based on x, y, z
 # TODO try different image formats
 def tile_request(request, id, z, x, y):
-    if z == '13':
-        pat = "/home/pavan/MagickTable/tiler/static/map2.jpg"
-    else:
-        pat = "/home/pavan/MagickTable/tiler/static/map.jpg"
+    # x 4093
+    # y 2723
+
+    x = int(x) - 4093
+    y = int(y) - 2723
+
+    i = coordinate(x, y)
+    pat = "tile" + i + ".png"
     try:
         with open(pat, "rb") as f:
-            return HttpResponse(f.read(), content_type="image/jpg")
+            return HttpResponse(f.read(), content_type="image/png")
     except IOError:
         red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
-        response = HttpResponse(content_type="image/jpeg")
+        response = HttpResponse(content_type="image/png")
         red.save(response, "JPEG")
         return response
+
+
+def coordinate(x, y):
+    index = x + 4 * (y)
+    return str(index).zfill(3)
