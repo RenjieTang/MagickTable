@@ -19,16 +19,18 @@ def tile_request(request, id, z, x, y):
 
     i = coordinate(x, y)
     pat = "tile" + i + ".png"
+    print(pat)
     try:
         with open(pat, "rb") as f:
             return HttpResponse(f.read(), content_type="image/png")
     except IOError:
         red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
         response = HttpResponse(content_type="image/png")
-        red.save(response, "JPEG")
+        red.save(response, "png")
         return response
 
 
 def coordinate(x, y):
+    # i + nx * (j + ny * k)
     index = x + 4 * (y)
-    return str(index).zfill(3)
+    return str(index).zfill(3).replace("-", "0")
