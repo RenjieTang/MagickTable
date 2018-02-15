@@ -18,7 +18,7 @@ def tile_request(request, id, z, x, y):
     y = int(y) - 2723
 
     i = coordinate(x, y)
-    pat = "tile" + i + ".png"
+    pat = "/users/group23/MagickTable/tile" + i + ".png"
     print(pat)
     try:
         with open(pat, "rb") as f:
