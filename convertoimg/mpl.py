@@ -4,8 +4,12 @@ import matplotlib.pyplot as plt
 import six
 
 df = pd.read_csv("dataBig.csv")
+df_obj = df.select_dtypes(['object'])
 
-def render_mpl_table(data, col_width=10.0, row_height=0.625, font_size=5,
+df[df_obj.columns] = df_obj.apply(lambda x: x[:10])
+
+
+def render_mpl_table(data, col_width=50.0, row_height=1, font_size=5,
                      header_color='#40466e', row_colors=['#f1f1f2', 'w'], edge_color='w',
                      bbox=[0, 0, 1, 1], header_columns=0,
                      ax=None, **kwargs):
@@ -25,8 +29,9 @@ def render_mpl_table(data, col_width=10.0, row_height=0.625, font_size=5,
             cell.set_text_props(weight='bold', color='w')
             cell.set_facecolor(header_color)
         else:
-            cell.set_facecolor(row_colors[k[0]%len(row_colors)])
-    plt.savefig('dataBig.png')
+            cell.set_facecolor(row_colors[k[0] % len(row_colors)])
+    plt.savefig('/home/pavan/MagickTable/dataBig2.png')
     return ax
 
-ax = render_mpl_table(df, header_columns=0, col_width=2.0)
+
+ax = render_mpl_table(df, header_columns=0, col_width=50.0)
