@@ -1,0 +1,7 @@
+Things to notice:
+  1. sample.csv is a small csv file usually used to check the correctness of the code.
+  2. dataBig.csv is the 300-line csv file which we need to create an image from.
+
+There are two approaches that I have taken:
+  1. Script2.py: build up a shell script that calls ImageMagick shell command to create the image.
+  2. pythonAPI.py: Use PythonMagick API to create the image.
