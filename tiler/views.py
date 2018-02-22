@@ -8,15 +8,15 @@ def index(request):
 
 
 # TODO get this after tiling
-max_tiles = 14
+max_tiles = 347
 
 # this is got from what leaflet sends as x & y
 start_x = 4091
 start_y = 2721
 
 # number of images on the x axis after tiling
-n_x = 5
-n_y = 3
+n_x = 6
+n_y = 58
 
 
 # this is the function that will return a tile based on x, y, z
@@ -35,10 +35,10 @@ def tile_request(request, id, z, x, y):
     y = int(math.fabs(y))
     i = coordinate(x, y)
     # print("i is ", i)
-    if int(i) > 14 or int(x) >= n_x or int(y) >= n_y:
+    if int(i) > max_tiles or int(x) >= n_x or int(y) >= n_y:
         return empty_response()
     print("(" + str(x) + ", " + str(y) + ") = " + i)
-    pat = "/home/pavan/MagickTable/convertoimg/tiles/sample_tile" + i + ".png"
+    pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
     # print(pat)
     try:
         with open(pat, "rb") as f:
