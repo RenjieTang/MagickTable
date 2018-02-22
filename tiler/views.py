@@ -1,7 +1,5 @@
 from django.http import HttpResponse
 from PIL import Image
-from django.conf import settings
-import os
 
 
 def index(request):
@@ -24,7 +22,7 @@ def tile_request(request, id, z, x, y):
         response = HttpResponse(content_type="image/png")
         red.save(response, "png")
         return response
-    pat = "tile" + i + ".png"
+    pat = "tiles/tile" + i + ".png"
     try:
         with open(pat, "rb") as f:
             return HttpResponse(f.read(), content_type="image/png")
