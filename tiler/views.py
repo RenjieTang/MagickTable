@@ -18,8 +18,13 @@ def tile_request(request, id, z, x, y):
     y = int(y) - 2723
 
     i = coordinate(x, y)
+    print("i is ", int(i))
+    if int(i) > 43:
+        red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
+        response = HttpResponse(content_type="image/png")
+        red.save(response, "png")
+        return response
     pat = "tile" + i + ".png"
-    print(pat)
     try:
         with open(pat, "rb") as f:
             return HttpResponse(f.read(), content_type="image/png")
@@ -32,5 +37,5 @@ def tile_request(request, id, z, x, y):
 
 def coordinate(x, y):
     # i + nx * (j + ny * k)
-    index = x + 4 * (y)
-    return str(index).zfill(3).replace("-", "0")
+    tile_number = x + 4 * y
+    return str(tile_number).zfill(3).replace("-", "0")
