@@ -5,3 +5,5 @@ Things to notice:
 There are two approaches that I have taken:
   1. Script2.py: build up a shell script that calls ImageMagick shell command to create the image.
   2. pythonAPI.py: Use PythonMagick API to create the image.
+
+For the web-based image generation, please follow the link http://pages.cs.wisc.edu/~renjie/table.html for a demo. The first table is an actual html table, while the second one is an png file.
