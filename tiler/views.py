@@ -1,6 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, render, redirect
+from django.urls import reverse
 from PIL import Image
 import math
+from tiler.forms import DocumentForm
+from tiler.models.Document import Document as DocModel
+from convertoimg.mpl import convert
+import mapui
 
 
 def index(request):
@@ -48,6 +54,26 @@ def tile_request(request, id, z, x, y):
         response = HttpResponse(content_type="image/png")
         red.save(response, "png")
         return response
+
+
+# handle file uploads
+def list(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            newdoc = DocModel(docfile=request.FILES['docfile'])
+            newdoc.save()
+            convert(newdoc.docfile.name)
+            # TODO this will not work with files of same name
+            return redirect('/map/leaflet?file=' + request.FILES['docfile'].name)
+
+    else:
+        form = DocumentForm()
+
+    documents = DocModel.objects.all()
+    return render(request, 'list.html',
+                  {'documents': documents, 'form': form}
+                  )
 
 
 def empty_response():
