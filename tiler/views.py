@@ -1,12 +1,14 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, render, redirect
-from django.urls import reverse
-from PIL import Image
 import math
+
+import os
+from PIL import Image
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+
+from convertoimg.mpl import convert
 from tiler.forms import DocumentForm
 from tiler.models.Document import Document as DocModel
-from convertoimg.mpl import convert
-import mapui
 
 
 def index(request):
@@ -14,27 +16,29 @@ def index(request):
 
 
 # TODO get this after tiling
-max_tiles = 347
+max_tiles = 15
 
 # this is got from what leaflet sends as x & y
 start_x = 4091
-start_y = 2721
+start_y = 2722
 
 # number of images on the x axis after tiling
-n_x = 6
-n_y = 58
+n_x = 5
+n_y = 3
 
 
 # this is the function that will return a tile based on x, y, z
 # TODO try different image formats
 # TODO mapbox uses 256 by 256 squares: so we need to pad our generated image to fit that
 def tile_request(request, id, z, x, y):
+    file_name = request.GET.get("file")
     # x 4091
     # y 2721
 
+    # print("x = ", x, " y = ", y)
     x = int(x) - start_x
     y = int(y) - start_y
-    print("(" + str(x) + ", " + str(y) + ")")
+    # print("(" + str(x) + ", " + str(y) + ")")
     if x < 0 or y < 0:
         return empty_response()
     x = int(math.fabs(x))
@@ -43,11 +47,14 @@ def tile_request(request, id, z, x, y):
     # print("i is ", i)
     if int(i) > max_tiles or int(x) >= n_x or int(y) >= n_y:
         return empty_response()
-    print("(" + str(x) + ", " + str(y) + ") = " + i)
+    # print("(" + str(x) + ", " + str(y) + ") = " + i)
+    # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
+    path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".png");
     pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
     # print(pat)
+    print(path)
     try:
-        with open(pat, "rb") as f:
+        with open(path, "rb") as f:
             return HttpResponse(f.read(), content_type="image/png")
     except IOError:
         red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
@@ -57,7 +64,7 @@ def tile_request(request, id, z, x, y):
 
 
 # handle file uploads
-def list(request):
+def list_files(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():

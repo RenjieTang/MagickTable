@@ -88,13 +88,16 @@ def slice_image(csv_name, img_path):
     img_shape = img.shape
     tile_size = (256, 256)
     offset = (256, 256)
+    tile_number = 0
 
     for i in range(int(math.ceil(img_shape[0] / (offset[1] * 1.0)))):
         for j in range(int(math.ceil(img_shape[1] / (offset[0] * 1.0)))):
             cropped_img = img[offset[1] * i:min(offset[1] * i + tile_size[1], img_shape[0]),
                           offset[0] * j:min(offset[0] * j + tile_size[0], img_shape[1])]
             # Debugging the tiles
-            cv2.imwrite(os.path.join(settings.MEDIA_ROOT, 'tiles', csv_name + str(i) + "_" + str(j) + ".png"), cropped_img)
+            pat = os.path.join(settings.MEDIA_ROOT, 'tiles', csv_name + str(tile_number).zfill(3).replace("-", "0") + ".png");
+            cv2.imwrite(pat, cropped_img)
+            tile_number = tile_number + 1
 
 
 def convert(csv_name):
