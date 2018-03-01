@@ -1,12 +1,14 @@
 import math
-
 import os
+
+import imgkit
+import pandas as pd
 from PIL import Image
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from convertoimg.mpl import convert
+from convertoimg.mpl import slice_image
 from tiler.forms import DocumentForm
 from tiler.models.Document import Document as DocModel
 
@@ -52,7 +54,7 @@ def tile_request(request, id, z, x, y):
     path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".png");
     pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
     # print(pat)
-    print(path)
+    # print(path)
     try:
         with open(path, "rb") as f:
             return HttpResponse(f.read(), content_type="image/png")
@@ -70,7 +72,7 @@ def list_files(request):
         if form.is_valid():
             newdoc = DocModel(docfile=request.FILES['docfile'])
             newdoc.save()
-            convert(newdoc.docfile.name)
+            convert_html(newdoc.docfile.name)
             # TODO this will not work with files of same name
             return redirect('/map/leaflet?file=' + request.FILES['docfile'].name)
 
@@ -81,6 +83,18 @@ def list_files(request):
     return render(request, 'list.html',
                   {'documents': documents, 'form': form}
                   )
+
+
+def convert_html(csv_name):
+    csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
+    html = csv.to_html()
+    # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
+    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'))
+    global n_x
+    global n_y
+    global max_tiles
+    n_x, n_y, max_tiles = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'))
+    print(n_x, n_y, max_tiles)
 
 
 def empty_response():
