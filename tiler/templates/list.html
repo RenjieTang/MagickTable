@@ -3,29 +3,62 @@
 <head>
     <meta charset="utf-8">
     <title>Minimal Django File Upload Example</title>
+    <link rel="stylesheet" href="list.css"/>
+    <style>
+        .container {
+            position: center;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        .formdiv {
+            position: center;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: auto;
+            padding-right: auto;
+            height: auto;
+        }
+
+        .formdiv form {
+            margin-left: auto;
+            border: black 1px solid;
+            margin-right: auto;
+
+        }
+    </style>
 </head>
 <body>
 <!-- List of uploaded documents -->
-{% if documents %}
-<ul>
-    {% for document in documents %}
-    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No documents.</p>
-{% endif %}
+<div class="container">
 
-<!-- Upload form. Note enctype attribute! -->
-<form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>{{ form.non_field_errors }}</p>
-    <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-    <p>
-        {{ form.docfile.errors }}
-        {{ form.docfile }}
-    </p>
-    <p><input type="submit" value="Upload"/></p>
-</form>
+    <h2>List of uploaded docs</h2>
+    {% if documents %}
+        <ul>
+            {% for document in documents %}
+                <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
+                <li><a href="/map/leaflet?file={{ document.docfile.name }}">View {{ document.docfile.name }} as map</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No documents.</p>
+    {% endif %}
+    <div class="formdiv">
+        <!-- Upload form. Note enctype attribute! -->
+        <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>{{ form.non_field_errors }}</p>
+            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+            <p>
+                {{ form.docfile.errors }}
+                {{ form.docfile }}
+            </p>
+            <p><input type="submit" value="Upload"/></p>
+        </form>
+    </div>
+</div>
 </body>
 </html>
