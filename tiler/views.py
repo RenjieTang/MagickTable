@@ -87,15 +87,23 @@ def list_files(request):
 
 def convert_html(csv_name):
     csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
-    html = csv.to_html()
-    # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
-    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'))
+    num_lines = csv.shape[0]
+    x = 0
     global n_x
     global n_y
     global max_tiles
-    n_x, n_y, max_tiles = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'))
-    print(n_x, n_y, max_tiles)
-
+    while x < num_lines :
+        csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name),skiprows=x,nrows=5000)
+        html = csv.to_html()
+    # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
+        imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'))
+        tile_num = 0
+        x_num, y_num, tile_num = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'), tile_num)
+        n_x += x_num
+        n_y += y_num
+        print(n_x, n_y, tile_num)
+        x += 5000
+    max_tiles = tile_num
 
 def empty_response():
     red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
