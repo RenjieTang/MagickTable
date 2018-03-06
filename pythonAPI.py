@@ -60,23 +60,23 @@ for x in range(1,num_cols+1):
 # text = Magick.DrawableText(50,50,"hshah")
 # img.draw(Magick.DrawableText(50,50,"hahah"))
 
-positionhei = 0
-for x in range(0,num_rows):
-    positionwid = 0
-    for y in range(0,num_cols):
-        original_st = str(df.iloc[x][y])
-        if len(original_st) > 42:
-            st = ""
-            for index in range(0, len(original_st)):
-                st += original_st[index]
-                if index % 42 == 0 and index != 0:
-                    st += '\n'
-            original_st = st
-        text = Magick.DrawableText(positionwid + 8, positionhei + 20, original_st)
-        # script += "-draw#text " + str(positionwid + 8) + "," + str(positionhei + 20) + "\'" + str(original_st) + "\'#"
-        img.draw(text)
-        positionwid += width_list[y]
-    positionhei += height_list[x]
+# positionhei = 0
+# for x in range(0,num_rows):
+#     positionwid = 0
+#     for y in range(0,num_cols):
+#         original_st = str(df.iloc[x][y])
+#         if len(original_st) > 42:
+#             st = ""
+#             for index in range(0, len(original_st)):
+#                 st += original_st[index]
+#                 if index % 42 == 0 and index != 0:
+#                     st += '\n'
+#             original_st = st
+#         text = Magick.DrawableText(positionwid + 8, positionhei + 20, original_st)
+#         # script += "-draw#text " + str(positionwid + 8) + "," + str(positionhei + 20) + "\'" + str(original_st) + "\'#"
+#         img.draw(text)
+#         positionwid += width_list[y]
+#     positionhei += height_list[x]
 img.write("big.png")
 
 
