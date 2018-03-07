@@ -66,7 +66,8 @@ def render_mpl_table(data, csv_name, col_width=10.0, row_height=0.625, font_size
                         st += '\n'
                 values[x][y] = st
 
-    mpl_table = ax.table(cellText=values, cellLoc="center", bbox=bbox, colLabels=data.columns, colWidths=width_list, **kwargs)
+    mpl_table = ax.table(cellText=values, cellLoc="center", bbox=bbox, colLabels=data.columns, colWidths=width_list,
+                         **kwargs)
 
     mpl_table.auto_set_font_size(False)
     mpl_table.set_fontsize(font_size)
@@ -91,12 +92,14 @@ def slice_image(csv_name, img_path, tile_num):
     tile_number = tile_num
     num_x = int(math.ceil(img_shape[0] / (offset[1] * 1.0)))
     num_y = int(math.ceil(img_shape[1] / (offset[0] * 1.0)))
+    print("slice {} of size {},{} image x = {}, y = {}".format(img_path, img_shape[0], img_shape[1], num_x, num_y))
     for i in range(num_x):
         for j in range(num_y):
             cropped_img = img[offset[1] * i:min(offset[1] * i + tile_size[1], img_shape[0]),
                           offset[0] * j:min(offset[0] * j + tile_size[0], img_shape[1])]
             # Debugging the tiles
-            pat = os.path.join(settings.MEDIA_ROOT, 'tiles', csv_name + str(tile_number).zfill(3).replace("-", "0") + ".png");
+            pat = os.path.join(settings.MEDIA_ROOT, 'tiles',
+                               csv_name + str(tile_number).zfill(3).replace("-", "0") + ".png");
             cv2.imwrite(pat, cropped_img)
             tile_number = tile_number + 1
     return num_y, num_x, tile_number

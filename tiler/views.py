@@ -47,12 +47,13 @@ def tile_request(request, id, z, x, y):
     y = int(math.fabs(y))
     i = coordinate(x, y)
     # print("i is ", i)
-    if int(i) > max_tiles or int(x) >= n_x or int(y) >= n_y:
-        return empty_response()
+    # if int(i) > max_tiles or int(x) >= n_x or int(y) >= n_y:
+    #     return empty_response()
     # print("(" + str(x) + ", " + str(y) + ") = " + i)
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
     path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".png");
-    pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
+    print("tile path = {}".format(path))
+    # pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
     # print(pat)
     # print(path)
     try:
@@ -74,6 +75,7 @@ def list_files(request):
             newdoc.save()
             convert_html(newdoc.docfile.name)
             # TODO this will not work with files of same name
+            print("final", n_x, n_x, max_tiles)
             return redirect('/map/leaflet?file=' + request.FILES['docfile'].name)
 
     else:
@@ -92,17 +94,18 @@ def convert_html(csv_name):
     global n_x
     global n_y
     global max_tiles
-    while x < num_lines :
-        csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name),skiprows=x,nrows=5000)
-        html = csv.to_html()
+    tile_num = 0
+    while x < num_lines:
+        df = csv[x:x+1000]
+        html = df.to_html()
     # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
-        imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'))
-        tile_num = 0
-        x_num, y_num, tile_num = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT, csv_name + '.jpg'), tile_num)
-        n_x += x_num
+        imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(x)+ '.jpg'))
+        y_num, x_num, tile_num = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT, csv_name +str(x)+ '.jpg'), tile_num)
+        n_x = x_num
         n_y += y_num
-        print(n_x, n_y, tile_num)
-        x += 5000
+        print("rows = {} x_n {} y_n {}".format(x,n_x, n_y, tile_num))
+        x += 1000
+    n_x = 5 # todo: why hardcode to 5
     max_tiles = tile_num
 
 def empty_response():
@@ -114,5 +117,5 @@ def empty_response():
 
 def coordinate(x, y):
     # i + nx * (j + ny * k)
-    tile_number = x + n_x * y
+    tile_number = x + 6 * y
     return str(tile_number).zfill(3).replace("-", "0")
