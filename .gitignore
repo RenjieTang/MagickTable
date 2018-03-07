@@ -94,7 +94,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-magictableEnv/*
+magicTableEnv/*
 
 # Spyder project settings
 .spyderproject
@@ -111,3 +111,5 @@ magictableEnv/*
 
 *.pyc
 
+# sqlite
+db.sqlite3
