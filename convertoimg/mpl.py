@@ -89,20 +89,20 @@ def slice_image(csv_name, img_path, tile_num):
     img_shape = img.shape
     tile_size = (256, 256)
     offset = (256, 256)
-    tile_number = tile_num
-    num_x = int(math.ceil(img_shape[0] / (offset[1] * 1.0)))
-    num_y = int(math.ceil(img_shape[1] / (offset[0] * 1.0)))
-    print("slice {} of size {},{} image x = {}, y = {}".format(img_path, img_shape[0], img_shape[1], num_x, num_y))
-    for i in range(num_x):
-        for j in range(num_y):
+    tile_count = tile_num
+    number_of_rows = int(math.ceil(img_shape[0] / (offset[1] * 1.0)))
+    number_of_cols = int(math.ceil(img_shape[1] / (offset[0] * 1.0)))
+    # print("slice {} of size {},{} image x = {}, y = {}".format(img_path, img_shape[0], img_shape[1], number_of_rows, number_of_cols))
+    for i in range(number_of_rows):
+        for j in range(number_of_cols):
             cropped_img = img[offset[1] * i:min(offset[1] * i + tile_size[1], img_shape[0]),
                           offset[0] * j:min(offset[0] * j + tile_size[0], img_shape[1])]
             # Debugging the tiles
             pat = os.path.join(settings.MEDIA_ROOT, 'tiles',
-                               csv_name + str(tile_number).zfill(3).replace("-", "0") + ".png");
+                               csv_name + str(tile_count).zfill(3).replace("-", "0") + ".jpg");
             cv2.imwrite(pat, cropped_img)
-            tile_number = tile_number + 1
-    return num_y, num_x, tile_number
+            tile_count = tile_count + 1
+    return number_of_cols, number_of_rows, tile_count
 
 
 def convert(csv_name):
