@@ -17,14 +17,15 @@ def index(request):
     return HttpResponse("Index page of tiler")
 
 
-total_tile_count = 15
+tile_count_on_x = 14
+tile_count_on_y = 99
+total_tile_count = 900
+
+rows_per_image = 500
 
 # todo: this is got from what leaflet sends as x & y
 start_x = 4091
 start_y = 2722
-
-tile_count_on_x = 5
-tile_count_on_y = 3
 
 
 # this is the function that will return a tile based on x, y, z
@@ -47,7 +48,7 @@ def tile_request(request, id, z, x, y):
     # print("i is ", i)
     if int(i) > total_tile_count or int(x) >= tile_count_on_x or int(y) >= tile_count_on_y:
         return empty_response()
-    # print("tile for (" + str(x) + ", " + str(y) + ") = " + i)
+    print("tile for (" + str(x) + ", " + str(y) + ") = " + i)
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
     path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".jpg");
     # print("tile path = {}".format(path))
@@ -102,7 +103,7 @@ def convert_html(csv_name):
     number_of_rows = 0
     tile_count = 0
     while x < num_lines:
-        df = csv[x:x + 100]
+        df = csv[x:x + rows_per_image]
         html = df.to_html()
         # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
         imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(x) + '.jpg'))
@@ -112,7 +113,7 @@ def convert_html(csv_name):
         tile_count_on_y += number_of_rows
         tile_count_on_x = number_of_cols
         # print("rows = {}\tx_n {}\t y_n {}\t tiles {}".format(x, tile_count_on_x, tile_count_on_y, tile_count))
-        x += 100
+        x += rows_per_image
     total_tile_count = tile_count
     # print("done converting")
 
