@@ -94,7 +94,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-magicTableEnv/*
+magickTableEnv/*
 
 # Spyder project settings
 .spyderproject
