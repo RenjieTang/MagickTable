@@ -1,9 +1,9 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.tools.plotting import table
 
 df = pd.read_csv("sample.csv")
-fig, ax = plt.subplots(1,1)
+fig, ax = plt.subplots(1, 1)
 ax.xaxis.set_visible(False)  # hide the x axis
 ax.yaxis.set_visible(False)  # hide the y axis
 
@@ -11,5 +11,5 @@ ax.yaxis.set_visible(False)  # hide the y axis
 
 df.plot(table=True, ax=ax)
 
-plt.show()
+# plt.show()
 # plt.savefig('mytable.png')
