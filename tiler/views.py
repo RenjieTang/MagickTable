@@ -106,7 +106,7 @@ def convert_html(csv_name):
         df = csv[x:x + rows_per_image]
         html = df.to_html()
         # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
-        imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(x) + '.jpg'))
+        imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(x) + '.jpg'), options={"xvfb": ""})
         number_of_cols, number_of_rows, tile_count = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT,
                                                                                         csv_name + str(x) + '.jpg'),
                                                                  tile_count)
