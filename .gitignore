@@ -113,3 +113,6 @@ magickTableEnv/*
 
 # sqlite
 db.sqlite3
+
+# images
+*.jpg
