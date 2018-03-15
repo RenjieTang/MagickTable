@@ -48,9 +48,9 @@ def tile_request(request, id, z, x, y):
     # print("i is ", i)
     if int(i) > total_tile_count or int(x) >= tile_count_on_x or int(y) >= tile_count_on_y:
         return empty_response()
-    print("tile for (" + str(x) + ", " + str(y) + ") = " + i)
+    print("tile for (" + str(x) + ", " + str(y) + ") = ")
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
-    path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".jpg");
+    path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + str(y) + "_" + str(x) + ".jpg");
     # print("tile path = {}".format(path))
     # pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
     # print(pat)
