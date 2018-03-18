@@ -12,20 +12,26 @@ from convertoimg.mpl import slice_image
 from tiler.forms import DocumentForm
 from tiler.models.Document import Document as DocModel
 
+import multiprocessing
+
 
 def index(request):
     return HttpResponse("Index page of tiler")
 
 
+# TODO: remove these from global values. If user refreshes map page these get reset and give wrong view
 tile_count_on_x = 14
 tile_count_on_y = 99
 total_tile_count = 900
 
-rows_per_image = 500
+rows_per_image = 5
 
 # todo: this is got from what leaflet sends as x & y
 start_x = 4091
 start_y = 2722
+
+# TODO: Find correct value. multiprocessing.cpu_count()-1 as a heuristic
+multiprocessing_limit = 10
 
 
 # this is the function that will return a tile based on x, y, z
@@ -50,7 +56,8 @@ def tile_request(request, id, z, x, y):
         return empty_response()
     print("tile for (" + str(x) + ", " + str(y) + ") = ")
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
-    path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + str(y) + "_" + str(x) + ".jpg");
+    path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".jpg");
+    # path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + str(y) + "_" + str(x) + ".jpg");
     # print("tile path = {}".format(path))
     # pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
     # print(pat)
@@ -89,33 +96,47 @@ def list_files(request):
                   )
 
 
-def convert_html(csv_name):
-    csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
-    num_lines = csv.shape[0]
-    x = 0
+def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0):
     global tile_count_on_x
     global tile_count_on_y
+    html = df.to_html()
+    tile_count = starting_tile_number
+    # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
+    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(subtable_number) + '.jpg'),
+                       options={"xvfb": ""})
+    number_of_cols, number_of_rows, tile_count = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT,
+                                                                                    csv_name + str(
+                                                                                        subtable_number) + '.jpg'),
+                                                             tile_count)
+    tile_count_on_y += number_of_rows
+    tile_count_on_x = number_of_cols
+    return number_of_cols, number_of_rows, tile_count
+
+
+def convert_html(csv_name):
+    csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
+    total_row_count = csv.shape[0]
+    x = 0
     global total_tile_count
-    tile_count_on_x = 0
-    tile_count_on_y = 0
     total_tile_count = 0
-    number_of_cols = 0
-    number_of_rows = 0
     tile_count = 0
-    while x < num_lines:
-        df = csv[x:x + rows_per_image]
-        html = df.to_html()
-        # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
-        imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(x) + '.jpg'), options={"xvfb": ""})
-        number_of_cols, number_of_rows, tile_count = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT,
-                                                                                        csv_name + str(x) + '.jpg'),
-                                                                 tile_count)
-        tile_count_on_y += number_of_rows
-        tile_count_on_x = number_of_cols
-        # print("rows = {}\tx_n {}\t y_n {}\t tiles {}".format(x, tile_count_on_x, tile_count_on_y, tile_count))
-        x += rows_per_image
-    total_tile_count = tile_count
-    # print("done converting")
+    df = csv[x:x + rows_per_image]
+    # convert the first set to get a count of the tiles per set
+    number_of_cols, number_of_rows, tile_count = convert_subtable_html(df, csv_name, subtable_number=0,
+                                                                       starting_tile_number=0)
+    number_of_subtables = math.ceil(total_row_count / rows_per_image)
+
+    thread_pool = multiprocessing.Pool(processes=multiprocessing_limit)
+    # start from 1 because we already did the first set
+    for subtable_number in range(1, number_of_subtables):
+        df = csv[subtable_number * rows_per_image: (subtable_number * rows_per_image) + rows_per_image]
+        thread_pool.apply_async(convert_subtable_html,
+                                args=(df, csv_name, subtable_number, tile_count * subtable_number + 1))
+
+    total_tile_count = number_of_subtables * tile_count
+
+
+# print("done converting")
 
 
 def empty_response():
