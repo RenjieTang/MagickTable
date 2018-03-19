@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from convertoimg.mpl import slice_image
+from convertoimg.converttoimg import slice_image
 from tiler.forms import DocumentForm
 from tiler.models.Document import Document as DocModel
 
