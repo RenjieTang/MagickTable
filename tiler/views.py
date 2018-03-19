@@ -1,4 +1,5 @@
 import math
+import multiprocessing
 import os
 
 import imgkit
@@ -6,13 +7,8 @@ import pandas as pd
 from PIL import Image
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
 
 from convertoimg.converttoimg import slice_image
-from tiler.forms import DocumentForm
-from tiler.models.Document import Document as DocModel
-
-import multiprocessing
 
 
 def index(request):
@@ -54,7 +50,7 @@ def tile_request(request, id, z, x, y):
     # print("i is ", i)
     if int(i) > total_tile_count or int(x) >= tile_count_on_x or int(y) >= tile_count_on_y:
         return empty_response()
-    print("tile for (" + str(x) + ", " + str(y) + ") = ")
+    print("tile for (" + str(x) + ", " + str(y) + ") = " + str(i))
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
     path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".jpg");
     # path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + str(y) + "_" + str(x) + ".jpg");
@@ -70,30 +66,6 @@ def tile_request(request, id, z, x, y):
         response = HttpResponse(content_type="image/jpg")
         red.save(response, "png")
         return response
-
-
-# handle file uploads
-def list_files(request):
-    global tile_count_on_x
-    global tile_count_on_y
-    global total_tile_count
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            newdoc = DocModel(docfile=request.FILES['docfile'])
-            newdoc.save()
-            convert_html(newdoc.docfile.name)
-            # TODO this will not work with files of same name
-            # print("final", tile_count_on_x, tile_count_on_y, total_tile_count)
-            return redirect('/map/leaflet?file=' + request.FILES['docfile'].name)
-
-    else:
-        form = DocumentForm()
-
-    documents = DocModel.objects.all()
-    return render(request, 'list.html',
-                  {'documents': documents, 'form': form}
-                  )
 
 
 def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0):

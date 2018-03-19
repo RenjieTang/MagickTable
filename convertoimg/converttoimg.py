@@ -1,10 +1,10 @@
-import pandas as pd
-# wqimport matplotlib.pyplot as plt
-import six
-import os
-from django.conf import settings
-import cv2
 import math
+import os
+
+import cv2
+import pandas as pd
+import six
+from django.conf import settings
 
 max_pixel_col = 5
 width_per_char = 0.1

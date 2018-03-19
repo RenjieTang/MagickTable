@@ -1,5 +1,5 @@
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.static import static
 
 """magicktable URL Configuration
 
@@ -18,8 +18,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
+                  path('', views.list_files, name='index'),
                   path('map/', include('mapui.urls')),
                   path('tiler/', include('tiler.urls')),
                   path('admin/', admin.site.urls),
