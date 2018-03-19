@@ -62,7 +62,7 @@ def tile_request(request, id, z, x, y):
         with open(path, "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpg")
     except IOError:
-        red = Image.new('RGBA', (1, 1), (255, 0, 0, 0))
+        red = Image.new('RGBA', (256, 256), (255, 0, 0, 0))
         response = HttpResponse(content_type="image/jpg")
         red.save(response, "png")
         return response
@@ -103,7 +103,7 @@ def convert_html(csv_name):
     for subtable_number in range(1, number_of_subtables):
         df = csv[subtable_number * rows_per_image: (subtable_number * rows_per_image) + rows_per_image]
         thread_pool.apply_async(convert_subtable_html,
-                                args=(df, csv_name, subtable_number, tile_count * subtable_number + 1))
+                                args=(df, csv_name, subtable_number, tile_count * subtable_number))
 
     total_tile_count = number_of_subtables * tile_count
 

@@ -9,4 +9,4 @@ def index(request):
 def leaflet(request):
     file_name = request.GET.get("file")
     context = {'file': file_name}
-    return render(request, 'leaflet_example.html', context)
+    return render(request, 'leaflet_map.html', context)
