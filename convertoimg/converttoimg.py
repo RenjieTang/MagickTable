@@ -99,10 +99,21 @@ def slice_image(csv_name, img_path, tile_num):
                           offset[0] * j:min(offset[0] * j + tile_size[0], img_shape[1])]
             pat = os.path.join(settings.MEDIA_ROOT, 'tiles',
                                csv_name + str(tile_count).zfill(3).replace("-", "0") + ".jpg")
+            if cropped_img.shape[0] < 256 or cropped_img.shape[1] < 256:
+                cropped_img = pad_to_256(cropped_img)
             # pat = os.path.join(settings.MEDIA_ROOT, 'tiles', csv_name + str(i) + "_" + str(j) + ".jpg");
             cv2.imwrite(pat, cropped_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
             tile_count = tile_count + 1
     return number_of_cols, number_of_rows, tile_count
+
+
+def pad_to_256(img):
+    height, width, channels = img.shape
+    bottom_padding = 256 - height
+    right_padding = 256 - width
+    img = cv2.copyMakeBorder(img, top=0, bottom=bottom_padding, left=0, right=right_padding,
+                             borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
+    return img
 
 
 def convert(csv_name):
