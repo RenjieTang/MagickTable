@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+#profile {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    width: 130px;
+    height 100px;
+    background-color: black;
+}
+
+a {
+    color: white;
+}
+
+</style>
 
     <title>Map UI</title>
 
@@ -59,6 +74,8 @@
     mymap.on('click', onMapClick);
 
 </script>
-
+<div id="profile">
+    <a href="https://www.google.com/" class="button" target="_blank">View Table Profile</a>
+</div>
 </body>
 </html>
