@@ -10,3 +10,9 @@ def leaflet(request):
     file_name = request.GET.get("file")
     context = {'file': file_name}
     return render(request, 'leaflet_map.html', context)
+
+
+def table_profile(request):
+    file_name = request.GET.get("file")
+    file_name = file_name[:-4] + ".html"
+    return render(request, file_name)
