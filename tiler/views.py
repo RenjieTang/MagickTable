@@ -7,6 +7,7 @@ import pandas as pd
 from PIL import Image
 from django.conf import settings
 from django.http import HttpResponse
+from django.utils.cache import add_never_cache_headers
 
 from convertoimg.converttoimg import slice_image
 
@@ -62,9 +63,10 @@ def tile_request(request, id, z, x, y):
         with open(path, "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpg")
     except IOError:
-        red = Image.new('RGBA', (256, 256), (255, 0, 0, 0))
+        red = Image.new('RGB', (256, 256), (255, 0, 0))
         response = HttpResponse(content_type="image/jpg")
-        red.save(response, "png")
+        add_never_cache_headers(response)
+        red.save(response, "jpeg")
         return response
 
 
