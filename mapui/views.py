@@ -19,6 +19,6 @@ def leaflet(request):
 def table_profile(request):
     file_name = request.GET.get("file")
     file_name = file_name[:-4] + "html"
-    output_name = os.path.join(settings.MEDIA_ROOT, "documents", flufile_name)
+    output_name = os.path.join(settings.MEDIA_ROOT, "documents", file_name)
     str = open(output_name).read()
     return HttpResponse(str)
