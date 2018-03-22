@@ -4,6 +4,7 @@ import os
 
 import imgkit
 import pandas as pd
+import pandas_profiling as pf
 from PIL import Image
 from django.conf import settings
 from django.http import HttpResponse
@@ -107,10 +108,10 @@ def convert_html(csv_name):
                                 args=(df, csv_name, subtable_number, tile_count * subtable_number))
 
     total_tile_count = number_of_subtables * tile_count
-    # profile_df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
-    # profile = pf.ProfileReport(profile_df)
-    # output_name = csv_name[:-4] + ".html"
-    # profile.to_file(outputfile=output_name)
+    profile_df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
+    profile = pf.ProfileReport(profile_df)
+    output_name = os.path.join(settings.MEDIA_ROOT, csv_name[:-4] + ".html")
+    profile.to_file(outputfile=output_name)
 
 
 # print("done converting")

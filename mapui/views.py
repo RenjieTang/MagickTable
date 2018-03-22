@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -8,11 +11,14 @@ def index(request):
 
 def leaflet(request):
     file_name = request.GET.get("file")
-    context = {'file': file_name}
+    output_name = file_name[:-4] + ".html"
+    context = {'file': file_name, 'profile': output_name}
     return render(request, 'leaflet_map.html', context)
 
 
 def table_profile(request):
     file_name = request.GET.get("file")
-    file_name = file_name[:-4] + ".html"
-    return render(request, file_name)
+    file_name = file_name[:-4] + "html"
+    output_name = os.path.join(settings.MEDIA_ROOT, "documents", flufile_name)
+    str = open(output_name).read()
+    return HttpResponse(str)
