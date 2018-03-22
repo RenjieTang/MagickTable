@@ -1,7 +1,6 @@
 import math
 import multiprocessing
 import os
-import pandas_profiling as pf
 
 import imgkit
 import pandas as pd
@@ -77,8 +76,7 @@ def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0)
     html = df.to_html()
     tile_count = starting_tile_number
     # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
-    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(subtable_number) + '.jpg'),
-                       options={"xvfb": ""})
+    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(subtable_number) + '.jpg'))
     number_of_cols, number_of_rows, tile_count = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT,
                                                                                     csv_name + str(
                                                                                         subtable_number) + '.jpg'),
@@ -109,11 +107,10 @@ def convert_html(csv_name):
                                 args=(df, csv_name, subtable_number, tile_count * subtable_number))
 
     total_tile_count = number_of_subtables * tile_count
-    profile_df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
-    profile = pf.ProfileReport(profile_df)
-    output_name = csv_name[:-4] + ".html"
-    profile.to_file(outputfile=output_name)
-
+    # profile_df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
+    # profile = pf.ProfileReport(profile_df)
+    # output_name = csv_name[:-4] + ".html"
+    # profile.to_file(outputfile=output_name)
 
 
 # print("done converting")
