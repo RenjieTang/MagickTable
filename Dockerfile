@@ -9,6 +9,10 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkh
 RUN tar vxf wkhtmltox-0.12.3_linux-generic-amd64.tar.xz 
 RUN cp wkhtmltox/bin/wk* /usr/local/bin/
 
+# install vi
+RUN apt-get update
+RUN apt-get install vim
+
 # RUN apt-get install -y xvfb
 
 WORKDIR /MagickTable
