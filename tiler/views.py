@@ -22,7 +22,7 @@ tile_count_on_x = 14
 tile_count_on_y = 99
 total_tile_count = 900
 
-rows_per_image = 5
+rows_per_image = 500
 
 # todo: this is got from what leaflet sends as x & y
 start_x = 4091
@@ -30,6 +30,9 @@ start_y = 2722
 
 # TODO: Find correct value. multiprocessing.cpu_count()-1 as a heuristic
 multiprocessing_limit = 10
+
+# TODO: change this based on zoom level
+max_chars_per_column = 40
 
 
 # this is the function that will return a tile based on x, y, z
@@ -74,7 +77,21 @@ def tile_request(request, id, z, x, y):
 def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0):
     global tile_count_on_x
     global tile_count_on_y
-    html = df.to_html()
+    pd.set_option('max_colwidth', 40)
+    df = df.astype(str).apply(lambda x: x.str[:max_chars_per_column])
+    html = df.style.set_table_styles(
+        [{'selector': 'thead th',
+          'props': [('background-color', '#9cd4e2'), ('text-align', 'center')]},
+         # {'selector': 'td',
+         #  # TODO: width should be based on number of columns else imgkit will complain about max image size
+         #  'props': [('width', '400px'), ('overflow', 'hidden'), ('text-overflow', 'ellipsis')]},
+         # {'selector': 'table',
+         #  'props': [('table-layout', 'fixed')]}
+         ]
+    ).render()
+
+    # html = df.style.set_table_styles(highlight_row_center_content()).render()
+    # to_html()
     tile_count = starting_tile_number
     # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
     imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(subtable_number) + '.jpg'))
