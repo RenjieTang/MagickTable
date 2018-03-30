@@ -29,7 +29,7 @@ start_x = 4091
 start_y = 2722
 
 # TODO: Find correct value. multiprocessing.cpu_count()-1 as a heuristic
-multiprocessing_limit = 10
+multiprocessing_limit = multiprocessing.cpu_count() - 1
 
 # TODO: change this based on zoom level
 max_chars_per_column = 40
