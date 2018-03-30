@@ -40,7 +40,8 @@
     <ul>
         {% for document in documents %}
         <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
-        <li><a href="/map/leaflet?file={{ document.docfile.name }}">View {{ document.docfile.name }} as map</a></li>
+        <li><a href="/map/leaflet?file={{ document.file_name }}">View {{ document.file_name }} as
+            map</a></li>
         {% endfor %}
     </ul>
     {% else %}

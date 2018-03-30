@@ -7,10 +7,12 @@ import pandas as pd
 import pandas_profiling as pf
 from PIL import Image
 from django.conf import settings
+from django.db.models import F
 from django.http import HttpResponse
 from django.utils.cache import add_never_cache_headers
 
 from convertoimg.converttoimg import slice_image
+from tiler.models.Document import TiledDocument
 
 
 def index(request):
@@ -18,9 +20,9 @@ def index(request):
 
 
 # TODO: remove these from global values. If user refreshes map page these get reset and give wrong view
-tile_count_on_x = 14
-tile_count_on_y = 99
-total_tile_count = 900
+tile_count_on_x = 0
+tile_count_on_y = 0
+total_tile_count = 0
 
 rows_per_image = 500
 
@@ -37,6 +39,8 @@ max_chars_per_column = 40
 
 # this is the function that will return a tile based on x, y, z
 # TODO try different image formats
+# TODO: add an inmemory caching layer ex: memcached
+# TODO: see if we can bunch a number of requests together rather than 1 per tile
 # TODO mapbox uses 256 by 256 squares: so we need to pad our generated image to fit that
 def tile_request(request, id, z, x, y):
     file_name = request.GET.get("file")
@@ -57,7 +61,7 @@ def tile_request(request, id, z, x, y):
         return empty_response()
     print("tile for (" + str(x) + ", " + str(y) + ") = " + str(i))
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
-    path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + i + ".jpg");
+    path = os.path.join(settings.MEDIA_ROOT, 'tiles', file_name + i + ".jpg");
     # path = os.path.join(settings.MEDIA_ROOT, 'tiles', 'documents', file_name + str(y) + "_" + str(x) + ".jpg");
     # print("tile path = {}".format(path))
     # pat = "/home/pavan/MagickTable/convertoimg/tiles/databig_tile" + i + ".png"
@@ -94,23 +98,32 @@ def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0)
     # to_html()
     tile_count = starting_tile_number
     # rendered = render_to_string('table.html', {'csv_path': os.path.join(settings.MEDIA_ROOT, csv_name)})
-    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, csv_name + str(subtable_number) + '.jpg'))
-    number_of_cols, number_of_rows, tile_count = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT,
+    imgkit.from_string(html, os.path.join(settings.MEDIA_ROOT, "documents", csv_name + str(subtable_number) + '.jpg'))
+    number_of_cols, number_of_rows, tile_count = slice_image(csv_name, os.path.join(settings.MEDIA_ROOT, "documents",
                                                                                     csv_name + str(
                                                                                         subtable_number) + '.jpg'),
                                                              tile_count)
     tile_count_on_y += number_of_rows
     tile_count_on_x = number_of_cols
+    tiled_document = TiledDocument.objects.get(document__file_name=csv_name)
+    tiled_document.tile_count_on_y = F('tile_count_on_y') + number_of_rows
+    tiled_document.tile_count_on_x = F('tile_count_on_x') + number_of_cols
+    tiled_document.total_tile_count = F('total_tile_count') + tile_count
+    tiled_document.save()
+
     return number_of_cols, number_of_rows, tile_count
 
 
-def convert_html(csv_name):
-    csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
+def convert_html(document, csv_name):
+    csv = pd.read_csv(os.path.join(settings.MEDIA_ROOT, "documents", csv_name))
     total_row_count = csv.shape[0]
     x = 0
     global total_tile_count
     total_tile_count = 0
     tile_count = 0
+    tiled_document = TiledDocument(document=document, tile_count_on_x=0, tile_count_on_y=0,
+                                   total_tile_count=0, profile_file_name=csv_name[:-4] + ".html")
+    tiled_document.save()
     df = csv[x:x + rows_per_image]
     # convert the first set to get a count of the tiles per set
     number_of_cols, number_of_rows, tile_count = convert_subtable_html(df, csv_name, subtable_number=0,
@@ -124,11 +137,11 @@ def convert_html(csv_name):
         thread_pool.apply_async(convert_subtable_html,
                                 args=(df, csv_name, subtable_number, tile_count * subtable_number))
 
-    total_tile_count = number_of_subtables * tile_count
-    profile_df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
+    total_tile_count = number_of_subtables * tile_count  # this is an approximation. last set of tiles maybe smaller
+    profile_df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, "documents", csv_name))
     profile = pf.ProfileReport(profile_df)
-    output_name = os.path.join(settings.MEDIA_ROOT, csv_name[:-4] + ".html")
-    profile.to_file(outputfile=output_name)
+    profile_output_path = os.path.join(settings.MEDIA_ROOT, "documents", csv_name[:-4] + "_profile.html")
+    profile.to_file(outputfile=profile_output_path)
 
 
 # print("done converting")
