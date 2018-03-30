@@ -55,9 +55,13 @@ def tile_request(request, id, z, x, y):
         return empty_response()
     x = int(math.fabs(x))
     y = int(math.fabs(y))
-    i = coordinate(x, y)
+
+    tiled_document = TiledDocument.objects.get(document__file_name=file_name)
+    i = coordinate(x, y, tiled_document.tile_count_on_x)
     # print("i is ", i)
-    if int(i) > total_tile_count or int(x) >= tile_count_on_x or int(y) >= tile_count_on_y:
+
+    if int(i) > tiled_document.total_tile_count or int(x) >= tiled_document.tile_count_on_x or \
+            int(y) >= tiled_document.tile_count_on_y:
         return empty_response()
     print("tile for (" + str(x) + ", " + str(y) + ") = " + str(i))
     # path = os.path.join(settings.MEDIA_ROOT, file_name + '.png')
@@ -154,7 +158,7 @@ def empty_response():
     return response
 
 
-def coordinate(x, y):
+def coordinate(x, y, tile_count_on_x):
     # i + nx * (j + ny * k)
     tile_number = x + tile_count_on_x * y
     return str(tile_number).zfill(3).replace("-", "0")
