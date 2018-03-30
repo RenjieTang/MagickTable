@@ -20,7 +20,6 @@ def list_files(request):
             newdoc = Document(file_name=request.FILES['docfile'].name, docfile=request.FILES['docfile'])
             newdoc.save()
             convert_html(newdoc, newdoc.file_name)
-            # TODO this will not work with files of same name
             return redirect('/map/leaflet?file=' + request.FILES['docfile'].name)
 
     else:
