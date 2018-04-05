@@ -1,8 +1,13 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from tiler.forms import DocumentForm
 from tiler.models.Document import Document
 from tiler.views import convert_html
+
+
+def file_with_same_name_exists(request):
+    return HttpResponse(True)
 
 
 def file_exists_in_db(file_name):
