@@ -92,7 +92,6 @@ def slice_image(csv_name, img_path, tile_num):
     tile_count = tile_num
     number_of_rows = int(math.ceil(img_shape[0] / (offset[1] * 1.0)))
     number_of_cols = int(math.ceil(img_shape[1] / (offset[0] * 1.0)))
-    # print("slice {} of size {},{} image x = {}, y = {}".format(img_path, img_shape[0], img_shape[1], number_of_rows, number_of_cols))
     for i in range(number_of_rows):
         for j in range(number_of_cols):
             cropped_img = img[offset[1] * i:min(offset[1] * i + tile_size[1], img_shape[0]),
@@ -101,7 +100,6 @@ def slice_image(csv_name, img_path, tile_num):
                                csv_name + str(tile_count).zfill(3).replace("-", "0") + ".jpg")
             if cropped_img.shape[0] < 256 or cropped_img.shape[1] < 256:
                 cropped_img = pad_to_256(cropped_img)
-            # pat = os.path.join(settings.MEDIA_ROOT, 'tiles', csv_name + str(i) + "_" + str(j) + ".jpg");
             cv2.imwrite(pat, cropped_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
             tile_count = tile_count + 1
     return number_of_cols, number_of_rows, tile_count
@@ -117,7 +115,5 @@ def pad_to_256(img):
 
 
 def convert(csv_name):
-    # csvname = "short"
-    #
     df = pd.read_csv(os.path.join(settings.MEDIA_ROOT, csv_name))
     ax = render_mpl_table(df, header_columns=0, col_width=2.0, csv_name=csv_name)

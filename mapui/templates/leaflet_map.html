@@ -7,7 +7,7 @@
             top: 80px;
 	    right: 0px;
             width: 10%;
-            height 100px;
+            height: 20px;
             background-color: black;
         }
 
@@ -47,7 +47,7 @@
 
     var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
-    L.tileLayer('http://localhost:8000/tiler/v4/{id}/{z}/{x}/{y}?file={{ file }}', {
+    L.tileLayer('http://ec2-54-166-180-111.compute-1.amazonaws.com/tiler/v4/{id}/{z}/{x}/{y}?file={{ file }}', {
         maxZoom: 18,
         id: 'mapbox.streets'
     }).addTo(mymap);

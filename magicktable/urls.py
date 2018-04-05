@@ -22,6 +22,7 @@ from . import views
 
 urlpatterns = [
                   path('', views.list_files, name='index'),
+                  path('fileexists/', views.file_with_same_name_exists, name='file_exists'),
                   path('map/', include('mapui.urls')),
                   path('tiler/', include('tiler.urls')),
                   path('admin/', admin.site.urls),

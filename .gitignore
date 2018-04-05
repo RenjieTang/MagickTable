@@ -116,3 +116,7 @@ db.sqlite3
 
 # images
 *.jpg
+
+# uploaded docs
+media/documents/*
+media/tiles/*
