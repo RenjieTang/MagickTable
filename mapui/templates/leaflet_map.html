@@ -5,15 +5,21 @@
         #profile {
             position: absolute;
             top: 80px;
-            right: 20px;
-            width: 130px;
-            height: 100px;
+	    right: 0px;
+            width: 10%;
+            height: 20px;
             background-color: black;
         }
 
         a {
             color: white;
         }
+	
+	#mapid {
+	    position: fixed;
+	    width: 85%;
+	    height: 100%;
+	}
 
     </style>
 
@@ -36,7 +42,7 @@
 <body>
 
 
-<div id="mapid" style="width: 1024px; height: 1024px;"></div>
+<div id="mapid"></div>
 <script>
 
     var mymap = L.map('mapid').setView([51.505, -0.09], 13);

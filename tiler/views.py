@@ -71,7 +71,7 @@ def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0)
     df = df.astype(str).apply(lambda x: x.str[:max_chars_per_column])
     html = df.style.set_table_styles(
         [{'selector': 'thead th',
-          'props': [('background-color', '#9cd4e2'), ('text-align', 'center')]},
+          'props': [('background-color', '#9cd4e2'), ('text-align', 'center'), ('font-family', 'Times New Roman')]},
          # {'selector': 'td',
          #  # TODO: width should be based on number of columns else imgkit will complain about max image size
          #  'props': [('width', '400px'), ('overflow', 'hidden'), ('text-overflow', 'ellipsis')]},
