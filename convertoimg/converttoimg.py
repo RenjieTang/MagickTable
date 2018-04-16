@@ -45,14 +45,9 @@ def render_mpl_table(data, csv_name, col_width=10.0, row_height=0.625, font_size
     total_width = sum(width_list)
 
     if ax is None:
-        # size = (np.array(data.shape[::-1]) + np.array([0, 1])) * np.array([col_width, row_height])
-        # print(size)
         fig, ax = plt.subplots(figsize=[total_width, total_height], dpi=200)
         ax.axis('off')
 
-    # print(width_list)
-    # print(total_width)
-    # print(total_height)
     values = data.values
 
     for x in range(0, num_rows):
