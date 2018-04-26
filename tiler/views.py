@@ -13,6 +13,7 @@ from django.utils.cache import add_never_cache_headers
 
 from convertoimg.converttoimg import slice_image
 from tiler.models.Document import TiledDocument
+import pdb
 
 
 def index(request):
@@ -38,6 +39,7 @@ max_chars_per_column = 40
 # TODO: see if we can bunch a number of requests together rather than 1 per tile
 # TODO mapbox uses 256 by 256 squares: so we need to pad our generated image to fit that
 def tile_request(request, id, z, x, y):
+    #print("{0},{1}".format(x, y))
     file_name = request.GET.get("file")
     x = int(x) - start_x
     y = int(y) - start_y
@@ -86,7 +88,8 @@ def convert_subtable_html(df, csv_name, subtable_number, starting_tile_number=0)
                                                              tile_count)
     tiled_document = TiledDocument.objects.get(document__file_name=csv_name)
     tiled_document.tile_count_on_y = F('tile_count_on_y') + number_of_rows
-    tiled_document.tile_count_on_x = F('tile_count_on_x') + number_of_cols
+    if tiled_document.tile_count_on_x == 0:
+        tiled_document.tile_count_on_x = number_of_cols
     tiled_document.total_tile_count = F('total_tile_count') + tile_count
     tiled_document.save()
 
@@ -100,8 +103,8 @@ def convert_html(document, csv_name):
     tiled_document = TiledDocument(document=document, tile_count_on_x=0, tile_count_on_y=0,
                                    total_tile_count=0, profile_file_name=csv_name[:-4] + ".html")
     tiled_document.save()
+    pdb.set_trace()
     df = csv[x:x + rows_per_image]
-
     # convert the first set to get a count of the tiles per set
     number_of_cols, number_of_rows, tile_count = convert_subtable_html(df, csv_name, subtable_number=0,
                                                                        starting_tile_number=0)
@@ -130,5 +133,6 @@ def empty_response():
 
 def coordinate(x, y, tile_count_on_x):
     # i + nx * (j + ny * k)
+    print("{0}\n".format(tile_count_on_x))
     tile_number = x + tile_count_on_x * y
     return str(tile_number).zfill(3).replace("-", "0")
