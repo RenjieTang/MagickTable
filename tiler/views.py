@@ -13,8 +13,6 @@ from django.utils.cache import add_never_cache_headers
 
 from convertoimg.converttoimg import slice_image
 from tiler.models.Document import TiledDocument
-import pdb
-
 
 def index(request):
     return HttpResponse("Index page of tiler")
@@ -102,7 +100,6 @@ def convert_html(document, csv_name):
     tiled_document = TiledDocument(document=document, tile_count_on_x=0, tile_count_on_y=0,
                                    total_tile_count=0, profile_file_name=csv_name[:-4] + ".html")
     tiled_document.save()
-    pdb.set_trace()
     df = csv[x:x + rows_per_image]
     # convert the first set to get a count of the tiles per set
     number_of_cols, number_of_rows, tile_count = convert_subtable_html(df, csv_name, subtable_number=0,
