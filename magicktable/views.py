@@ -7,7 +7,7 @@ from tiler.views import convert_html
 
 
 def file_with_same_name_exists(request):
-    return HttpResponse(True)
+    return HttpResponse(False)
 
 
 def file_exists_in_db(file_name):

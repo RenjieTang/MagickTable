@@ -79,7 +79,7 @@ def render_mpl_table(data, csv_name, col_width=10.0, row_height=0.625, font_size
     return ax
 
 
-def slice_image(csv_name, img_path, tile_num):
+def slice_image(csv_name, img_path, tile_num, zoom_level):
     img = cv2.imread(img_path)
     img_shape = img.shape
     tile_size = (256, 256)
@@ -91,7 +91,7 @@ def slice_image(csv_name, img_path, tile_num):
         for j in range(number_of_cols):
             cropped_img = img[offset[1] * i:min(offset[1] * i + tile_size[1], img_shape[0]),
                           offset[0] * j:min(offset[0] * j + tile_size[0], img_shape[1])]
-            pat = os.path.join(settings.MEDIA_ROOT, 'tiles',
+            pat = os.path.join(settings.MEDIA_ROOT, 'tiles', str(zoom_level),
                                csv_name + str(tile_count).zfill(3).replace("-", "0") + ".jpg")
             if cropped_img.shape[0] < 256 or cropped_img.shape[1] < 256:
                 cropped_img = pad_to_256(cropped_img)

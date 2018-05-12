@@ -8,7 +8,8 @@ class Document(models.Model):
 
 
 class TiledDocument(models.Model):
-    document = models.OneToOneField(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    zoom_level = models.IntegerField()
     tile_count_on_x = models.IntegerField()
     tile_count_on_y = models.IntegerField()
     total_tile_count = models.IntegerField()

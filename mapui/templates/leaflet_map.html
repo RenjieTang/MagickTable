@@ -5,21 +5,29 @@
         #profile {
             position: absolute;
             top: 80px;
-	    right: 0px;
+            right: 0px;
             width: 10%;
             height: 20px;
             background-color: black;
         }
 
+        #zoom_level_div {
+            position: absolute;
+            top: 60px;
+            right: 0px;
+            width: 10%;
+            height: 20px;
+        }
+
         a {
             color: white;
         }
-	
-	#mapid {
-	    position: fixed;
-	    width: 85%;
-	    height: 100%;
-	}
+
+        #mapid {
+            position: fixed;
+            width: 85%;
+            height: 100%;
+        }
 
     </style>
 
@@ -47,7 +55,7 @@
 
     var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
-    L.tileLayer('http://ec2-54-166-180-111.compute-1.amazonaws.com/tiler/v4/{id}/{z}/{x}/{y}?file={{ file }}', {
+    L.tileLayer('http://ec2-54-172-196-127.compute-1.amazonaws.com//tiler/v4/{id}/{z}/{x}/{y}?file={{ file }}', {
         maxZoom: 18,
         id: 'mapbox.streets'
     }).addTo(mymap);
@@ -62,8 +70,17 @@
     }
 
     mymap.on('click', onMapClick);
+    mymap.on('zoomend', function () {
+        var zoom_display = document.getElementById("zoom_level_div");
+        zoom_display.innerText = "zoom = " + (Number(mymap.getZoom()) - 3).toString();
+
+    })
 
 </script>
+
+<div id="zoom_level_div">
+    zoom = 10
+</div>
 <div id="profile">
     <a href=/map/profile?file={{profile}} class="button" target="_blank">View Table Profile</a>
 </div>
